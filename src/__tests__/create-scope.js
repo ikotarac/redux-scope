@@ -63,4 +63,22 @@ describe('createScope', () => {
     expect(name2(bigState)).toEqual('Joanna');
     expect(surname2(bigState)).toEqual('Doe');
   });
+
+  test('should support connecting multiple children at once', () => {
+    const parentScope = createScope('parent');
+    const child1 = createScope('child-1');
+    const child2 = createScope('child-2');
+
+    parentScope.connectScopes(child1, child2);
+
+    const simpleAction1 = child1.action('simple-action');
+    expect(simpleAction1.type.success).toEqual(
+      'parent/child-1/simple-action/success',
+    );
+
+    const simpleAction2 = child2.action('simple-action');
+    expect(simpleAction2.type.success).toEqual(
+      'parent/child-2/simple-action/success',
+    );
+  });
 });

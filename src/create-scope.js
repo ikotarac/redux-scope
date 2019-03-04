@@ -64,10 +64,15 @@ export function createScope(scopeName) {
     parent.children[child.scopeName] = child;
   }
 
+  function connectScopes(...children) {
+    _.forEach(children, connectScope);
+  }
+
   return {
     [scopeConfigSymbol]: scopeConfig,
     connectReducer,
     connectScope,
+    connectScopes,
     ...scoped(() => scopeConfig.fullScopeName),
   };
 }
