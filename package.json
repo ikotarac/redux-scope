@@ -1,10 +1,12 @@
 {
   "name": "redux-scope",
-  "version": "0.0.0",
-  "description": "Reduce boilerplate and facilitate redux modularity.",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "Reduce boilerplate and facilitate Redux modularity. ⚙️🔩",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "babel src --out-dir lib --ignore '**/__tests__'",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/ikotarac/redux-scope/issues"
   },
-  "homepage": "https://github.com/ikotarac/redux-scope#readme"
+  "homepage": "https://github.com/ikotarac/redux-scope#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "babel-jest": "^24.1.0",
+    "jest": "^24.1.0"
+  },
+  "dependencies": {
+    "redux": "^4.0.1",
+    "redux-scope-helpers": "^1.2.0"
+  }
 }
