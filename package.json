@@ -1,6 +1,6 @@
 {
   "name": "redux-scope",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Reduce boilerplate and facilitate Redux modularity. ⚙️🔩",
   "main": "lib/index.js",
   "scripts": {
