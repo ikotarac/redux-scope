@@ -128,10 +128,10 @@ fontSize(state); // 'small'
 Redux scopes can be nested. Let's make another scope:
 
 ```javascript
-export const favoritesScope = createScope("favorites-scope");
+export const favoritesScope = createScope('favorites-scope');
 const { createAction, connectReducer } = favoritesScope;
 
-const addToFavorites = createAction("add-to-favorites");
+const addToFavorites = createAction('add-to-favorites');
 
 function favorites(state = [1, 2], action) {
   switch(action.type) {
@@ -142,7 +142,7 @@ function favorites(state = [1, 2], action) {
   }
 }
 
-const getFavorites = connectReducer(favoriteProfiles);
+const getFavorites = connectReducer(favorites);
 ```
 
 Now let's connect `favorites` scope as a child of the `user-profile` scope, and create root reducer.
