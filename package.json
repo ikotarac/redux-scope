@@ -1,6 +1,6 @@
 {
   "name": "redux-scope",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Reduce boilerplate and facilitate Redux modularity. ⚙️🔩",
   "main": "lib/index.js",
   "scripts": {
@@ -12,6 +12,19 @@
     "type": "git",
     "url": "git+https://github.com/ikotarac/redux-scope.git"
   },
+  "keywords": [
+    "redux scope",
+    "scoped redux",
+    "scoped actions",
+    "reduce redux boilerplate",
+    "redux helpers",
+    "redux actions",
+    "redux boilerplate",
+    "redux types",
+    "redux selectors",
+    "redux modules",
+    "modular redux"
+  ],
   "author": "Ilijan Kotarac",
   "license": "MIT",
   "bugs": {

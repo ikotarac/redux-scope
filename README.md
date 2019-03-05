@@ -88,7 +88,7 @@ const size = fontSize(state); // 'large'
 
 ### Getting root reducer
 
-When you're ready to create your redux store, just use the root scope to get the root reducer
+When you're ready to create your redux store, just use the root scope to get the root reducer:
 
 ```javascript
 // import createStore, ...
@@ -101,7 +101,7 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 ### Remarks
 
-✨ Generated root reducer produces state with the following shape
+✨ Generated root reducer produces state with the following shape:
 
 ```json
 {
@@ -116,7 +116,7 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 }
 ```
 
-✨ All selectors are wired automatically, they recieve root state and work everywhere
+✨ All selectors are wired automatically, they recieve root state and work everywhere:
 
 ```javascript
 loading(state); // false
@@ -145,7 +145,7 @@ function favorites(state = [1, 2], action) {
 const getFavorites = connectReducer(favorites);
 ```
 
-Now let's connect `favorites` scope as a child of the `user-profile` scope, and create root reducer.
+Now let's connect `favorites-scope` as a child of the `user-profile-scope`, and create root reducer.
 
 ```javascript
 // import createStore, ...
@@ -213,7 +213,7 @@ This would produce:
 }
 ```
 
-If you pass a collection of scopes to `createRootReducer`, it will create the root scope for you behind the scenes:
+If you pass a collection of scopes to `createRootReducer`, it will create the root scope (named `root`) for you behind the scenes:
 
 ```
 const rootReducer = createRootReducer([
@@ -252,7 +252,7 @@ created actions would have automatically scoped action types:
 
 ✨ No matter where you import and use your selectors, you always pass the root state, no need to pass the substate selector manually.
 
-✨ The mechanism of nesting scopes using `connectScope` makes sure all selectors remain connected to the right part of the state. Neat! 🔬
+✨ The mechanism of nesting scopes using `connectScope` makes sure all selectors remain connected to the right part of the state 🔬
 
 ✨ Your modules do not need to know where their reducer will be mounted, thus you get enhanced modularity.
 
@@ -273,7 +273,7 @@ externalScope.connectReducer(reducer);
 
 ### Connecting result of `createRootReducer` to external reducer
 
-Provide a path to the mounting point so that selectors can work correctly
+Provide a path to the mounting point so that selectors can work correctly:
 
 ```javascript
 // use redux scope as usual
