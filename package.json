@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "redux": "^4.0.1",
-    "redux-scope-helpers": "^1.2.2"
+    "redux-scope-helpers": "^1.2.3"
   }
 }
