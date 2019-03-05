@@ -3,7 +3,7 @@
 Remove Redux boilerplate and enhance your project modularity.
 
 Redux scope logically brings together _actions_, _action types_, _reducers_ and _selectors_.
-It puts the focus on **reducers** and the **state**, making them modular and well organised, sparing you from doing all the internal wiring yourself.
+It puts the focus on **reducers** and the **state**, making them modular and well organised, sparing you from writing boilerplate and doing all the wiring yourself.
 
 ## Installation
 
@@ -15,14 +15,14 @@ It puts the focus on **reducers** and the **state**, making them modular and wel
 import createScope from 'redux-scope';
 import { fetchUserDataAsync } from './my-user-api'
 
-export const userProfileScope = createScope('user-profile-scope');
+const userProfileScope = createScope('user-profile-scope');
 const { createAction, connectReducer } = userProfileScope;
 
 // creates a thunk with corresponding request, success and error actions
-export const fetchUser = createAction(fetchUserDataAsync, 'fetch-user');
+const fetchUser = createAction(fetchUserDataAsync, 'fetch-user');
 
 // creates a simple action creator and its type
-export const setFontSize = createAction('set-font-size');
+const setFontSize = createAction('set-font-size');
 
 const userDefault = {
   user: null,
@@ -57,7 +57,7 @@ const user(state = userDefault, action) {
 }
 
 // when you connect reducer, you get selectors based on the shape of the default state
-export const { user, loading, error } = connectReducer(user);
+const { user, loading, error } = connectReducer(user);
 
 // you can connect more reducers to a single scope
 function preferences(state = { fontSize: 'small' }, action) {
@@ -70,7 +70,14 @@ case setFontSize.type.success:
       return state;
 }
 
-export const { fontSize } = connectReducer(preferences);
+const { fontSize } = connectReducer(preferences);
+```
+
+You can now export your action creators and selectors and use them as usual:
+
+```javascript
+dispatch(setFontSize('large'));
+const size = fontSize(state);
 ```
 
 ### Getting root reducer
@@ -170,30 +177,7 @@ Now, generated state looks like this:
 
 ### Scopes can be nested in any arrangement
 
-If we do the nesting other way around:
-
-`favoritesScope.connectScope(userProfileScope)`
-
-root reducer would produce following state shape:
-
-```
-{
-  'user-profile-scope': {
-    user: {
-      user: { ... },
-      error: null,
-      loading: false,
-    },
-    preferences: {
-      fontSize: 'small',
-    },
-  }
-
-  favorites: [1, 2, ...],
-}
-```
-
-Or we can create a new scope just to contain all the child scopes:
+We can do the nesting the other way around, `favoritesScope.connectScope(userProfileScope)`, or we can create a new scope just to contain all the child scopes:
 
 ```javascript
 const appScope = createScope("app-scope");
@@ -203,7 +187,7 @@ appScope.connectScope(favoritesScope);
 const rootReducer = createRootReducer(appScope);
 ```
 
-which would produce:
+This would produce:
 
 ```
 {
@@ -259,7 +243,7 @@ created actions would have automatically scoped action types:
 
 ✨ Your modules do not need to know where their reducer will be mounted, thus you get enhanced modularity.
 
-✨ You can use your selectors like any other selector, compose them or use them with `reselect`.
+✨ You can use your selectors like any other selector, compose them or use them with [reselect](https://github.com/reduxjs/reselect).
 
 ## Interop with other reducers
 
@@ -276,7 +260,7 @@ externalScope.connectReducer(reducer);
 ...
 ```
 
-### Connecting root reducer produced by `createRootReducer` to external reducer
+### Connecting result of `createRootReducer` to external reducer
 
 Provide a path to the mounting point so that selectors can work correctly
 
