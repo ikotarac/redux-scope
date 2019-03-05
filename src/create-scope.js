@@ -53,6 +53,10 @@ export function createScope(scopeName) {
     );
   }
 
+  function connectReducers(...reducers) {
+    _.forEach(reducers, connectReducer);
+  }
+
   function connectScope(childScope) {
     const child = childScope[scopeConfigSymbol];
     const parent = scopeConfig;
@@ -71,6 +75,7 @@ export function createScope(scopeName) {
   return {
     [scopeConfigSymbol]: scopeConfig,
     connectReducer,
+    connectReducers,
     connectScope,
     connectScopes,
     ...scoped(() => scopeConfig.fullScopeName),

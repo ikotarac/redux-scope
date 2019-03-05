@@ -70,4 +70,26 @@ describe('createRootReducer', () => {
 
     expect(rootReducer()).toEqual(rootInitialState);
   });
+
+  test.only('should correctly handle reducers that return primitives', () => {
+    const scope = createScope('combine-primitives');
+    const add = scope.action('add');
+    const increment = scope.action('increment');
+
+    const name = (state = '', action) => {
+      return state;
+    };
+
+    const counter = (state = 0, action) => {
+      return state;
+    };
+
+    scope.connectReducer(name);
+    scope.connectReducer(counter);
+
+    const rootReducer = createRootReducer(scope);
+    const rootInitialState = { name: '', counter: 0 };
+
+    expect(rootReducer()).toEqual(rootInitialState);
+  });
 });

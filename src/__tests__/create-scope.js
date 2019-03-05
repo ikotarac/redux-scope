@@ -7,9 +7,7 @@ describe('createScope', () => {
       const { action } = createScope('my-scope');
       const simpleAction = action('simple-action');
 
-      expect(simpleAction.type.success).toEqual(
-        'my-scope/simple-action/success',
-      );
+      expect(simpleAction.type).toEqual('my-scope/simple-action');
     });
 
     test('scoped action creators should support scope nesting', () => {
@@ -19,8 +17,8 @@ describe('createScope', () => {
       parentScope.connectScope(childScope);
 
       const simpleAction = childScope.action('simple-action');
-      expect(simpleAction.type.success).toEqual(
-        'parent-scope/child-scope/simple-action/success',
+      expect(simpleAction.type).toEqual(
+        'parent-scope/child-scope/simple-action',
       );
     });
   });
@@ -72,13 +70,9 @@ describe('createScope', () => {
     parentScope.connectScopes(child1, child2);
 
     const simpleAction1 = child1.action('simple-action');
-    expect(simpleAction1.type.success).toEqual(
-      'parent/child-1/simple-action/success',
-    );
+    expect(simpleAction1.type).toEqual('parent/child-1/simple-action');
 
     const simpleAction2 = child2.action('simple-action');
-    expect(simpleAction2.type.success).toEqual(
-      'parent/child-2/simple-action/success',
-    );
+    expect(simpleAction2.type).toEqual('parent/child-2/simple-action');
   });
 });

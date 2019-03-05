@@ -1,5 +1,7 @@
 # Redux Scope 🔭
 
+Reduce Redux boilerplate and improve modularity.
+
 Redux scope logically brings together _actions_, _action types_, _reducers_ and _selectors_.
 It puts the focus on **reducers** and the **state**, making them modular and well organised, sparing you from writing boilerplate and doing all the wiring manually.
 
@@ -10,44 +12,47 @@ It puts the focus on **reducers** and the **state**, making them modular and wel
 ## Usage
 
 ```javascript
-import createScope from "redux-scope";
-import { fetchUserDataAsync } from "./my-user-api";
+import createScope from 'redux-scope';
+import { fetchUserDataAsync } from './my-user-api';
 
-const userProfileScope = createScope("user-profile-scope");
+const userProfileScope = createScope('user-profile-scope');
 const { createAction, connectReducer } = userProfileScope;
 
 // creates a thunk with corresponding request, success and error actions
-const fetchUser = createAction(fetchUserDataAsync, "fetch-user");
+const fetchUser = createAction(fetchUserDataAsync, 'fetch-user');
 
 // creates a simple action creator and its type
-const setFontSize = createAction("set-font-size");
+const setFontSize = createAction('set-font-size');
 
 const userDefault = {
   user: null,
   loading: false,
-  error: null
+  error: null,
 };
 
 function user(state = userDefault, action) {
   switch (action.type) {
-    case fetchUser.type.request: // value: 'user-profile-scope/fetch-user/request'
+    // value: 'user-profile-scope/fetch-user/request'
+    case fetchUser.type.request:
       return {
         ...state,
         loading: true,
-        error: null
+        error: null,
       };
-    case fetchUser.type.success: // 'user-profile-scope/fetch-user/success'
+    // 'user-profile-scope/fetch-user/success'
+    case fetchUser.type.success:
       return {
         ...state,
         user: action.payload,
         loading: false,
-        error: null
+        error: null,
       };
-    case fetchUser.type.error: // 'user-profile-scope/fetch-user/error'
+    // 'user-profile-scope/fetch-user/error'
+    case fetchUser.type.error:
       return {
         ...state,
         loading: false,
-        error: action.error
+        error: action.error,
       };
     default:
       return state;
@@ -58,12 +63,13 @@ function user(state = userDefault, action) {
 const { user, loading, error } = connectReducer(user);
 
 // you can connect more reducers to a single scope
-function preferences(state = { fontSize: "small" }, action) {
+function preferences(state = { fontSize: 'small' }, action) {
   switch (action.type) {
-    case setFontSize.type.success:
+    // simple actions have type 'user-profile-scope/set-font-size'
+    case setFontSize.type:
       return {
         ...state,
-        fontSize: action.payload
+        fontSize: action.payload,
       };
     default:
       return state;
@@ -76,7 +82,7 @@ const { fontSize } = connectReducer(preferences);
 You can now export your action creators and selectors and use them as usual:
 
 ```javascript
-dispatch(setFontSize("large"));
+dispatch(setFontSize('large'));
 const size = fontSize(state); // 'large'
 ```
 
@@ -86,8 +92,8 @@ When you're ready to create your redux store, just use the root scope to get the
 
 ```javascript
 // import createStore, ...
-import { createRootReducer } from "redux-scope";
-import { userProfileScope } from "./user-profile";
+import { createRootReducer } from 'redux-scope';
+import { userProfileScope } from './user-profile';
 
 const rootReducer = createRootReducer(userProfileScope);
 const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -97,16 +103,16 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 ✨ Generated root reducer produces state with the following shape
 
-```javascript
+```json
 {
-  user: {
-    user: null,
-    error: null,
-    loading: false,
+  "user": {
+    "user": null,
+    "error": null,
+    "loading": false
   },
-  preferences: {
-    fontSize: 'small',
-  },
+  "preferences": {
+    "fontSize": "small"
+  }
 }
 ```
 
@@ -122,14 +128,14 @@ fontSize(state); // 'small'
 Redux scopes can be nested. Let's make another scope:
 
 ```javascript
-export const favoritesScope = createScope('favorites-scope');
+export const favoritesScope = createScope("favorites-scope");
 const { createAction, connectReducer } = favoritesScope;
 
-const addToFavorites = createAction('add-to-favorites');
+const addToFavorites = createAction("add-to-favorites");
 
-function favorites(state = [], action) {
+function favorites(state = [1, 2], action) {
   switch(action.type) {
-    case addToFavorites.type.success:
+    case addToFavorites.type:
       return [...state, action.payload],
     default:
       return state;
@@ -142,10 +148,10 @@ const getFavorites = connectReducer(favoriteProfiles);
 Now let's connect `favorites` scope as a child of the `user-profile` scope, and create root reducer.
 
 ```javascript
+// import createStore, ...
 import { createRootReducer } from 'redux-scope';
 import { userProfileScope } from './user-profile';
 import { favoritesScope } from './favorites';
-...
 
 userProfileScope.connectScope(favoritesScope);
 
@@ -155,19 +161,19 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 Now, generated state looks like this:
 
-```javascript
+```json
 {
-  user: {
-    user: { ... },
-    error: null,
-    loading: false,
+  "user": {
+    "user": null,
+    "error": null,
+    "loading": false
   },
-  preferences: {
-    fontSize: 'small',
+  "preferences": {
+    "fontSize": "small"
   },
-  'favorites-scope': {
-    favorites: [1, 2, ...],
-  },
+  "favorites-scope": {
+    "favorites": [1, 2]
+  }
 }
 ```
 
@@ -180,7 +186,7 @@ Now, generated state looks like this:
 We can do the nesting the other way around, `favoritesScope.connectScope(userProfileScope)`, or we can create a new scope just to contain all the child scopes:
 
 ```javascript
-const appScope = createScope("app-scope");
+const appScope = createScope('app-scope');
 appScope.connectScope(userProfileScope);
 appScope.connectScope(favoritesScope);
 
@@ -189,20 +195,20 @@ const rootReducer = createRootReducer(appScope);
 
 This would produce:
 
-```
+```json
 {
-  'user-profile-scope': {
-    user: {
-      user: { ... },
-      error: null,
-      loading: false,
+  "user-profile-scope": {
+    "user": {
+      "user": null,
+      "error": null,
+      "loading": false
     },
-    preferences: {
-      fontSize: 'small',
-    },
-  }
-  'favorites-scope': {
-    favorites: [1, 2, ...],
+    "preferences": {
+      "fontSize": "small"
+    }
+  },
+  "favorites-scope": {
+    "favorites": [1, 2]
   }
 }
 ```
@@ -222,17 +228,24 @@ Nesting scopes automatically prefixes action types with scope names of all the p
 
 ```javascript
 dispatch(addToFavorites(12345));
-dispatch(setFontSize("large"));
+dispatch(setFontSize('large'));
+dispatch(fetchUser());
 ```
 
 created actions would have automatically scoped action types:
 
 ```
-'app-scope/favorites-scope/add-to-favorites/success'
+'app-scope/favorites-scope/add-to-favorites'
 ```
 
 ```
-'app-scope/user-profile-scope/set-font-size/success'
+'app-scope/user-profile-scope/set-font-size'
+```
+
+```
+'app-scope/user-profile-scope/fetch-user/request'
+'app-scope/user-profile-scope/fetch-user/success'
+'app-scope/user-profile-scope/fetch-user/error'
 ```
 
 ### Selectors stay wired correctly
@@ -252,12 +265,10 @@ created actions would have automatically scoped action types:
 Just connect your reducer to a scope:
 
 ```javascript
-import { reducer } from './external-module'
+import { reducer } from './external-module';
 
 const externalScope = createReducer('some-external-module');
 externalScope.connectReducer(reducer);
-
-...
 ```
 
 ### Connecting result of `createRootReducer` to external reducer
@@ -265,15 +276,18 @@ externalScope.connectReducer(reducer);
 Provide a path to the mounting point so that selectors can work correctly
 
 ```javascript
+// use redux scope as usual
 const myRootScope = createScope('my-root-scope');
-...
 
 // provide path to root scope so that selectors can work correctly
-const myRootReducer = createRootReducer(myRootScope, state => state.somewhere.deep);
+const myRootReducer = createRootReducer(
+  myRootScope,
+  state => state.somewhere.deep,
+);
 
 // use like any other reducer
 const otherReducer = combineReducers({
   myRootReducer,
-...
+  // ... other reducers
 });
 ```
