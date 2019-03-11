@@ -5,6 +5,8 @@ Reduce Redux boilerplate and improve modularity.
 Redux scope logically brings together _actions_, _action types_, _reducers_ and _selectors_.
 It puts the focus on **reducers** and the **state**, making them modular and well organised, sparing you from writing boilerplate and doing all the wiring manually.
 
+_**Disclaimer.**_ Current test coverage is basic, just confirming that basic concepts work well. Until completely covered with tests, this package should be considered experimental.
+
 ## Installation
 
 `npm install redux-scope`
@@ -12,42 +14,64 @@ It puts the focus on **reducers** and the **state**, making them modular and wel
 ## Usage
 
 ```javascript
+const preferencesScope = createScope('preferences');
+const { createAction, connectReducer } = preferencesScope;
+
+// create action creator and its type
+const setFontSize = createAction('set-font-size');
+
+function preferences(state = { fontSize: 'small' }, action) {
+  switch (action.type) {
+    case setFontSize.type: // 'preferences/set-font-size'
+      return {
+        ...state,
+        fontSize: action.payload,
+      };
+    default:
+      return state;
+  }
+}
+
+// connect reducer, and get selectors based on the shape of the default state
+const { fontSize } = connectReducer(preferences);
+```
+
+## Creating thunks
+
+```javascript
 import createScope from 'redux-scope';
 import { fetchUserDataAsync } from './my-user-api';
 
-const userProfileScope = createScope('user-profile-scope');
+const userProfileScope = createScope('user');
 const { createAction, connectReducer } = userProfileScope;
 
 // creates a thunk with corresponding request, success and error actions
 const fetchUser = createAction(fetchUserDataAsync, 'fetch-user');
 
-// creates a simple action creator and its type
-const setFontSize = createAction('set-font-size');
-
 const userDefault = {
-  user: null,
+  data: null,
   loading: false,
   error: null,
 };
 
 function user(state = userDefault, action) {
   switch (action.type) {
-    // value: 'user-profile-scope/fetch-user/request'
+    // value: 'user/fetch-user/request'
     case fetchUser.type.request:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    // 'user-profile-scope/fetch-user/success'
+    // 'user/fetch-user/success'
     case fetchUser.type.success:
       return {
         ...state,
-        user: action.payload,
+        data: action.payload,
         loading: false,
         error: null,
       };
-    // 'user-profile-scope/fetch-user/error'
+    // 'user/fetch-user/error'
     case fetchUser.type.error:
       return {
         ...state,
@@ -59,31 +83,28 @@ function user(state = userDefault, action) {
   }
 }
 
-// when you connect reducer, you get selectors based on the shape of the default state
-const { user, loading, error } = connectReducer(user);
+const { data, loading, error } = connectReducer(user);
 
 // you can connect more reducers to a single scope
-function preferences(state = { fontSize: 'small' }, action) {
-  switch (action.type) {
-    // simple actions have type 'user-profile-scope/set-font-size'
-    case setFontSize.type:
-      return {
-        ...state,
-        fontSize: action.payload,
-      };
+const addToFavorites = createAction('add-to-favorites');
+
+function favorites(state = [], action) {
+  switch(action.type) {
+    case addToFavorites.type:
+      return [...state, action.payload],
     default:
       return state;
   }
 }
 
-const { fontSize } = connectReducer(preferences);
+const getFavorites = connectReducer(favorites);
 ```
 
 You can now export your action creators and selectors and use them as usual:
 
 ```javascript
-dispatch(setFontSize('large'));
-const size = fontSize(state); // 'large'
+dispatch(addToFavorites({ userId: 123 }));
+const favorites = getFavorites(state); // [{ userId: 123 }]
 ```
 
 ### Getting root reducer
@@ -106,13 +127,11 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 ```json
 {
   "user": {
-    "user": null,
+    "data": null,
     "error": null,
     "loading": false
   },
-  "preferences": {
-    "fontSize": "small"
-  }
+  "favorites": []
 }
 ```
 
@@ -125,37 +144,17 @@ fontSize(state); // 'small'
 
 ## Composing scopes
 
-Redux scopes can be nested. Let's make another scope:
-
-```javascript
-export const favoritesScope = createScope('favorites-scope');
-const { createAction, connectReducer } = favoritesScope;
-
-const addToFavorites = createAction('add-to-favorites');
-
-function favorites(state = [1, 2], action) {
-  switch(action.type) {
-    case addToFavorites.type:
-      return [...state, action.payload],
-    default:
-      return state;
-  }
-}
-
-const getFavorites = connectReducer(favorites);
-```
-
-Now let's connect `favorites-scope` as a child of the `user-profile-scope`, and create root reducer.
+Redux scopes can be nested. We have already created two scopes named `user` and `preferences`. Now let's connect `preferences` scope as a child of the scope `user`, and create root reducer.
 
 ```javascript
 // import createStore, ...
 import { createRootReducer } from 'redux-scope';
-import { userProfileScope } from './user-profile';
-import { favoritesScope } from './favorites';
+import { userScope } from './user';
+import { preferencesScope } from './preferences';
 
-userProfileScope.connectScope(favoritesScope);
+userScope.connectScope(preferencesScope);
 
-const rootReducer = createRootReducer(userProfileScope);
+const rootReducer = createRootReducer(userScope);
 const store = createStore(rootReducer, applyMiddleware(thunk));
 ```
 
@@ -164,31 +163,31 @@ Now, generated state looks like this:
 ```json
 {
   "user": {
-    "user": null,
+    "data": null,
     "error": null,
     "loading": false
   },
+  "favorites": [],
   "preferences": {
-    "fontSize": "small"
-  },
-  "favorites-scope": {
-    "favorites": [1, 2]
+    "preferences": {
+      "fontSize": "small"
+    }
   }
 }
 ```
 
 ✨ All reducers in a child scope are combined together using `combineReducers` before being merged with reducers that belong to the parent scope
 
-✨ This combined reducer is named after the scope it belongs to, in this case `favorites-scope`
+✨ This combined reducer is named after the scope it belongs to, in this case `preferences`
 
 ### Scopes can be nested in any arrangement
 
-We can do the nesting the other way around, `favoritesScope.connectScope(userProfileScope)`, or we can create a new scope just to contain all the child scopes:
+We can do the nesting the other way around, `preferencesScope.connectScope(userScope)`, or we can create a new scope just to contain all the child scopes:
 
 ```javascript
-const appScope = createScope('app-scope');
-appScope.connectScope(userProfileScope);
-appScope.connectScope(favoritesScope);
+const appScope = createScope('app');
+appScope.connectScope(userScope);
+appScope.connectScope(preferencesScope);
 
 const rootReducer = createRootReducer(appScope);
 ```
@@ -197,29 +196,26 @@ This would produce:
 
 ```json
 {
-  "user-profile-scope": {
+  "user": {
     "user": {
-      "user": null,
+      "data": null,
       "error": null,
       "loading": false
     },
+    "favorites": []
+  },
+  "preferences": {
     "preferences": {
       "fontSize": "small"
     }
-  },
-  "favorites-scope": {
-    "favorites": [1, 2]
   }
 }
 ```
 
 If you pass a collection of scopes to `createRootReducer`, it will create the root scope (named `root`) for you behind the scenes:
 
-```
-const rootReducer = createRootReducer([
-  userProfileScope,
-  favoritesScope
-]);
+```javascript
+const rootReducer = createRootReducer([userScope, preferencesScope]);
 ```
 
 ### Action types are scoped automatically
@@ -227,7 +223,7 @@ const rootReducer = createRootReducer([
 Nesting scopes automatically prefixes action types with scope names of all the parent scopes. Say, if we dispatch following actions:
 
 ```javascript
-dispatch(addToFavorites(12345));
+dispatch(addToFavorites({ userId: 123 }));
 dispatch(setFontSize('large'));
 dispatch(fetchUser());
 ```
@@ -235,17 +231,17 @@ dispatch(fetchUser());
 created actions would have automatically scoped action types:
 
 ```
-'app-scope/favorites-scope/add-to-favorites'
+'app/favorites/add-to-favorites'
 ```
 
 ```
-'app-scope/user-profile-scope/set-font-size'
+'app/user/set-font-size'
 ```
 
 ```
-'app-scope/user-profile-scope/fetch-user/request'
-'app-scope/user-profile-scope/fetch-user/success'
-'app-scope/user-profile-scope/fetch-user/error'
+'app/user/fetch-user/request'
+'app/user/fetch-user/success'
+'app/user/fetch-user/error'
 ```
 
 ### Selectors stay wired correctly
