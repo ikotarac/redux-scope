@@ -1,11 +1,11 @@
 module.exports = {
+  plugins: ['@babel/plugin-transform-typeof-symbol'],
   presets: [
     [
       '@babel/preset-env',
       {
-        targets: {
-          node: 'current',
-        },
+        targets: '> 0.25%, not dead',
+        useBuiltIns: 'usage',
       },
     ],
   ],
