@@ -1,6 +1,6 @@
 {
   "name": "redux-scope",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Reduce Redux boilerplate and improve modularity 🔭",
   "main": "lib/index.js",
   "scripts": {
@@ -39,7 +39,6 @@
     "jest": "^24.1.0"
   },
   "dependencies": {
-    "redux": "^4.0.1",
-    "redux-scope-helpers": "^1.2.3"
+    "redux": "^4.0.1"
   }
 }
