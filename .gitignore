@@ -62,3 +62,6 @@ typings/
 
 # transpiled files
 lib
+
+# vscode files
+.vscode

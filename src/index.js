@@ -1,7 +1,6 @@
-export {
-  createScope as default,
-  createScope,
-  createScope as scope,
-} from './create-scope';
-export { createRootReducer } from './create-root-reducer';
-export { combineSelectors } from 'redux-scope-helpers';
+export { createAction, createThunk } from './actions';
+export { createScope, combineScopes } from './scopes';
+export { createSelector, createSelectors, combineSelectors } from './selectors';
+export { createRootReducer } from './reducer';
+
+export default createScope;
