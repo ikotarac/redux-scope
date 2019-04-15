@@ -1,2 +1,2 @@
 export { createAction } from './create-action';
-export { createThunk } from './create-thunk';
+export { createThunk, createThunkType } from './create-thunk';

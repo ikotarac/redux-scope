@@ -35,7 +35,7 @@ function reducer(state = { fontSize: 'small' }, action) {
   }
 }
 
-export const fontSizeSelector = createSelector(state => state.fontSize);
+export const fontSize = createSelector(state => state.fontSize);
 
 export const preferencesScope = createScope('preferences', reducer, {
   setFontSize,
@@ -52,7 +52,7 @@ import { createRootReducer } from 'redux-scope';
 import {
   preferencesScope,
   setFontSize,
-  fontSizeSelector,
+  fontSize as fontSizeSelector,
 } from 'src/modules/preferences';
 
 const rootReducer = createRootReducer({
@@ -194,10 +194,10 @@ function reducer(state = [], action) {
   }
 }
 
-export const getFavorites = createSelector(); // by default you select state => state
+export const favorites = createSelector(); // by default you select state => state
 export const favoritesScope = createScope('favorites', reducer, {
   addToFavorites,
-  getFavorites,
+  favorites,
 });
 
 ```
@@ -330,3 +330,50 @@ export const reducer = createRootReducer(
 ```
 
 Now you can use exported reducer like any other reducer, compose it with _combineReducers_, and all actions and selectors inside your module will work correctly.
+
+## combineSelectors
+
+`combineSelectors` is a convenience mapper that reduces boilerplate in writing `mapStateToProps`:
+
+```javascipt
+import { combineSelectors } from 'redux-scope';
+import { fontSize, favorites } from './selectors';
+
+// before
+const mapStateToProps = (state, ownProps) => {
+  fontSize: fontSize(state),
+  favorites: favorites(state),
+}
+
+// after
+const mapStateToProps = combineSelectors({
+  fontSize,
+  favorites
+});
+```
+
+## I just want to use helpers without scope
+
+No problem, `createAction`, `createThunk` and `createSelectors` accept one more parameter, that defines scope path or state selector, so you can use them without Redux Scope:
+
+`just-helpers.js`
+
+```javascript
+import { createAction, createThunk, createSelectors } from 'redux-scope';
+import { asyncCall } from './async-call';
+
+const initialState = {
+  someData: null,
+  ids: [],
+  count: 1,
+};
+
+const action = createAction('some-action', 'my/module');
+
+const thunk = createThunk(asyncCall, 'my/module');
+
+const { someData, ids, count } = createSelectors(
+  initialState,
+  state => state.my.module,
+);
+```
