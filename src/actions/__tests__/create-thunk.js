@@ -83,7 +83,7 @@ describe('createThunk', () => {
 
     expect(thunk(2, 3)(dispatch)).rejects.toEqual(
       new Error(
-        `Scope property 'path' not provided. Did you forget to add all scope consumers to a scope?`,
+        "Scope property 'path' not provided for consumer 'my-beautiful-thunk'. Did you add all scope consumers to a scope?",
       ),
     );
   });

@@ -39,8 +39,16 @@ describe('createRootReducer', () => {
   });
 
   test('should initialize action creators to correct scope', () => {
+    const action1 = createAction('action1');
+    const action2 = createAction('action2');
+    const action3 = createAction('action3');
+
     function reducer1(state = { prop1: 1 }, action) {
-      return state;
+      switch (action.type) {
+        case action1.type:
+        default:
+          return state;
+      }
     }
     function reducer2(state = { prop2: 2 }, action) {
       return state;
@@ -48,10 +56,6 @@ describe('createRootReducer', () => {
     function reducer3(state = { prop3: 3 }, action) {
       return state;
     }
-
-    const action1 = createAction('action1');
-    const action2 = createAction('action2');
-    const action3 = createAction('action3');
 
     const scope1 = createScope('scope1', reducer1, { action1 });
     const scope2 = createScope('scope2', reducer2, { action2 });
@@ -69,8 +73,18 @@ describe('createRootReducer', () => {
   });
 
   test('should initialize thunk creators to correct scope', () => {
+    const thunk1 = createThunk(() => null, 'thunk1');
+    const thunk2 = createThunk(() => null, 'thunk2');
+    const thunk3 = createThunk(() => null, 'thunk3');
+
     function reducer1(state = { prop1: 1 }, action) {
-      return state;
+      switch (action.type) {
+        case thunk1.type.request:
+        case thunk1.type.error:
+        case thunk1.type.success:
+        default:
+          return state;
+      }
     }
     function reducer2(state = { prop2: 2 }, action) {
       return state;
@@ -78,10 +92,6 @@ describe('createRootReducer', () => {
     function reducer3(state = { prop3: 3 }, action) {
       return state;
     }
-
-    const thunk1 = createThunk(() => null, 'thunk1');
-    const thunk2 = createThunk(() => null, 'thunk2');
-    const thunk3 = createThunk(() => null, 'thunk3');
 
     const scope1 = createScope('scope1', reducer1, { thunk1 });
     const scope2 = createScope('scope2', reducer2, { thunk2 });

@@ -25,9 +25,12 @@ export function createThunk(actionFunction, actionName, scopePath) {
         try {
           const payload = await actionFunction(...args);
           dispatch({ type: type.success, request, payload });
+
           return payload;
         } catch (error) {
           dispatch({ type: type.error, request, error });
+
+          return null;
         }
       };
 
@@ -36,5 +39,6 @@ export function createThunk(actionFunction, actionName, scopePath) {
       return actionCreator;
     },
     { path: scopePath },
+    actionName,
   );
 }

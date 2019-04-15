@@ -21,5 +21,6 @@ export function createAction(actionName, scopePath) {
       return actionCreator;
     },
     { path: scopePath },
+    actionName,
   );
 }

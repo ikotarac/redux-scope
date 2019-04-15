@@ -21,7 +21,7 @@ describe('createAction', () => {
 
   test('should throw error if scope path is not provided', () => {
     const action = createAction('action-name');
-    expect(() => action(1)).toThrowError(`Scope property 'path' not provided.`);
+    expect(() => action(1)).toThrowError("Scope property 'path' not provided");
   });
 
   test('should be able to set scope path after creation', () => {
