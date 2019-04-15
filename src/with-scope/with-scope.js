@@ -2,15 +2,7 @@ import _ from 'lodash';
 
 const SCOPE_PROPS = ['name', 'stateSelector', 'path'];
 
-function getErrorMessage(propertyName, consumerName) {
-  if (consumerName) {
-    return `Scope property '${propertyName}' not provided for consumer '${consumerName}'. Did you add all scope consumers to a scope?`;
-  }
-
-  return `Scope property '${propertyName}' not provided. Did you add all scope consumers to a scope?`;
-}
-
-function addPropertyGetter(getters, propertyName, values, consumerName) {
+function addPropertyGetter(getters, propertyName, values) {
   Object.defineProperty(getters, propertyName, {
     get() {
       const value = values[propertyName];
@@ -18,7 +10,9 @@ function addPropertyGetter(getters, propertyName, values, consumerName) {
         return value;
       }
 
-      throw new Error(getErrorMessage(propertyName, consumerName));
+      throw new Error(
+        `Scope property '${propertyName}' not provided. Did you add all scope consumers to a scope?`,
+      );
     },
   });
 }

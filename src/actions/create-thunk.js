@@ -1,4 +1,5 @@
 import { withScope } from '../with-scope';
+import { generateRandomPrefix } from './generate-random-prefix';
 
 export function createThunkType(actionName, scope) {
   return {
@@ -38,7 +39,6 @@ export function createThunk(actionFunction, actionName, scopePath) {
 
       return actionCreator;
     },
-    { path: scopePath },
-    actionName,
+    { path: scopePath || generateRandomPrefix() },
   );
 }

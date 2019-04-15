@@ -76,16 +76,13 @@ describe('createThunk', () => {
     });
   });
 
-  test('should throw error if scope path is not provided', () => {
+  test('should generate random action type prefix if scope path is not provided', () => {
     const mockFunction = jest.fn((x, y) => Promise.resolve(x + y));
     const thunk = createThunk(mockFunction, 'my-beautiful-thunk');
-    const dispatch = jest.fn();
 
-    expect(thunk(2, 3)(dispatch)).rejects.toEqual(
-      new Error(
-        "Scope property 'path' not provided for consumer 'my-beautiful-thunk'. Did you add all scope consumers to a scope?",
-      ),
-    );
+    expect(thunk.type.request).toContain('unscoped');
+    expect(thunk.type.error).toContain('unscoped');
+    expect(thunk.type.success).toContain('unscoped');
   });
 
   test('should be able to set scope path after creation', async () => {

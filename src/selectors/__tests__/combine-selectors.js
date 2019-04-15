@@ -4,7 +4,7 @@ import { combineSelectors } from '../combine-selectors';
 
 describe('combineSelectors', () => {
   test('should create mapStateToProps from given map of selectors', () => {
-    const state = {
+    const demoState = {
       scope: {
         property: 'bla',
       },
@@ -18,7 +18,7 @@ describe('combineSelectors', () => {
     propertySelector.setScope({ stateSelector: state => state.scope });
 
     const { someProperty, items } = createSelectors(
-      state.otherScope,
+      demoState.otherScope,
       state => state.otherScope,
     );
 
@@ -34,7 +34,7 @@ describe('combineSelectors', () => {
       alsoItem: itemSelectorWithProps,
     });
 
-    const props = mapStateToProps(state, { itemIndex: 1 });
+    const props = mapStateToProps(demoState, { itemIndex: 1 });
 
     expect(props).toEqual({
       propertySelector: 'bla',
@@ -44,7 +44,7 @@ describe('combineSelectors', () => {
       alsoItem: 'cat',
     });
 
-    const otherProps = mapStateToProps(state, { itemIndex: 2 });
+    const otherProps = mapStateToProps(demoState, { itemIndex: 2 });
 
     expect(otherProps).toEqual({
       propertySelector: 'bla',

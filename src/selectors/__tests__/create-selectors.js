@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { createSelectors } from '../create-selectors';
 
 describe('createSelectors', () => {
   test('should create selectors from given state prototype object (e.g. initial state)', () => {
-    const state = {
+    const demoState = {
       scope: {
         property1: 'bla',
         property2: 2,
@@ -10,12 +11,12 @@ describe('createSelectors', () => {
     };
 
     const { property1, property2 } = createSelectors(
-      state.scope,
+      demoState.scope,
       state => state.scope,
     );
 
-    expect(property1(state)).toEqual('bla');
-    expect(property2(state)).toEqual(2);
+    expect(property1(demoState)).toEqual('bla');
+    expect(property2(demoState)).toEqual(2);
   });
 
   test('should create selectors from given reducer', () => {
@@ -45,20 +46,20 @@ describe('createSelectors', () => {
   });
 
   test('selectors prouced from prototype state should be able to set scope lazily', () => {
-    const state = {
+    const demoState = {
       scope: {
         property1: 'bla',
         property2: 2,
       },
     };
 
-    const { property1, property2 } = createSelectors(state.scope);
+    const { property1, property2 } = createSelectors(demoState.scope);
 
     property1.setScope({ stateSelector: state => state.scope });
     property2.setScope({ stateSelector: state => state.scope });
 
-    expect(property1(state)).toEqual('bla');
-    expect(property2(state)).toEqual(2);
+    expect(property1(demoState)).toEqual('bla');
+    expect(property2(demoState)).toEqual(2);
   });
 
   test('selectors produced from a reducer should be able to set scope lazily', () => {
@@ -87,20 +88,20 @@ describe('createSelectors', () => {
   });
 
   test('should throw if selector is used with uninitialized state selector', () => {
-    const state = {
+    const demoState = {
       scope: {
         property1: 'bla',
         property2: 2,
       },
     };
 
-    const { property1, property2 } = createSelectors(state.scope);
+    const { property1, property2 } = createSelectors(demoState.scope);
 
     property1.setScope({ stateSelector: state => state.scope });
 
-    expect(property1(state)).toEqual('bla');
-    expect(() => property2(state)).toThrowError(
-      `Scope property 'stateSelector' not provided.`,
+    expect(property1(demoState)).toEqual('bla');
+    expect(() => property2(demoState)).toThrowError(
+      "Scope property 'stateSelector' not provided.",
     );
   });
 

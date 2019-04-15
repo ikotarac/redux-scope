@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createScope, combineScopes } from '../../scopes';
 import { createAction, createThunk } from '../../actions';
 import { createSelector, createSelectors } from '../../selectors';
@@ -131,9 +132,7 @@ describe('createRootReducer', () => {
       return state;
     }
 
-    const selector1 = createSelector(state => {
-      return state && state.prop1;
-    });
+    const selector1 = createSelector(state => state.prop1);
     const selector2 = createSelector(state => state.prop2);
     const { prop31, prop32 } = createSelectors(reducer3);
 

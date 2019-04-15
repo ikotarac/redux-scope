@@ -1,4 +1,5 @@
 import { withScope } from '../with-scope';
+import { generateRandomPrefix } from './generate-random-prefix';
 
 export function createActionType(actionName, scope) {
   return `${scope.path}/${actionName}`;
@@ -20,7 +21,6 @@ export function createAction(actionName, scopePath) {
 
       return actionCreator;
     },
-    { path: scopePath },
-    actionName,
+    { path: scopePath || generateRandomPrefix() },
   );
 }

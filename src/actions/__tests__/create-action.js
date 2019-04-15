@@ -19,9 +19,9 @@ describe('createAction', () => {
     });
   });
 
-  test('should throw error if scope path is not provided', () => {
+  test('should generate random action type prefix if scope path is not provided', () => {
     const action = createAction('action-name');
-    expect(() => action(1)).toThrowError("Scope property 'path' not provided");
+    expect(action.type).toContain('unscoped');
   });
 
   test('should be able to set scope path after creation', () => {

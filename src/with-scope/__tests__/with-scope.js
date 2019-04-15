@@ -42,34 +42,34 @@ describe('withScope', () => {
     });
 
     expect(() => scopeConsumer.getName()).toThrowError(
-      `Scope property 'name' not provided.`,
+      "Scope property 'name' not provided.",
     );
   });
 
   test('should throw if returned scope consumer is not object-like (is not able to have properties)', () => {
-    expect(() => withScope(scope => null)).toThrowError(
+    expect(() => withScope(() => null)).toThrowError(
       'Scope consumer must be object-like',
     );
 
-    expect(() => withScope(scope => undefined)).toThrowError(
+    expect(() => withScope(() => undefined)).toThrowError(
       'Scope consumer must be object-like',
     );
 
-    expect(() => withScope(scope => 1)).toThrowError(
+    expect(() => withScope(() => 1)).toThrowError(
       'Scope consumer must be object-like',
     );
 
-    expect(() => withScope(scope => 'some-string')).toThrowError(
+    expect(() => withScope(() => 'some-string')).toThrowError(
       'Scope consumer must be object-like',
     );
 
     expect(() =>
-      withScope(scope => ({
+      withScope(() => ({
         some: 'thing',
       })),
     ).not.toThrowError('Scope consumer must be object-like');
 
-    expect(() => withScope(scope => [1, 2, 'bla'])).not.toThrowError(
+    expect(() => withScope(() => [1, 2, 'bla'])).not.toThrowError(
       'Scope consumer must be object-like',
     );
 

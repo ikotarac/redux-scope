@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createAction } from '../../actions';
 import { createSelector } from '../../selectors';
 import { createScope } from '../create-scope';
